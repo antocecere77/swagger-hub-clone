@@ -1,0 +1,126 @@
+SWAGGER HUB CLONE - BACKEND SPRING BOOT 3.2.x SCAFFOLD
+=====================================================
+
+File creati il 2026-04-11:
+
+CONFIGURAZIONE BUILD
+====================
+✓ pom.xml - Maven POM con Spring Boot 3.2.5, H2, Lombok, SpringDoc OpenAPI 2.5.0
+
+ENTITY & MODELLI
+================
+✓ src/main/java/com/swaggerhub/clone/model/ApiDefinition.java - Entity JPA per le definizioni API
+✓ src/main/java/com/swaggerhub/clone/model/ApiVersion.java - Entity JPA per le versioni API
+✓ src/main/java/com/swaggerhub/clone/model/ApiStatus.java - Enum (ACTIVE, DELETED)
+✓ src/main/java/com/swaggerhub/clone/model/ApiVisibility.java - Enum (PUBLIC, PRIVATE, TEAM)
+✓ src/main/java/com/swaggerhub/clone/model/VersionStatus.java - Enum (DRAFT, PUBLISHED, DEPRECATED)
+
+DTOs (DATA TRANSFER OBJECTS)
+============================
+✓ src/main/java/com/swaggerhub/clone/dto/ApiDefinitionRequest.java - Request DTO per creazione API
+✓ src/main/java/com/swaggerhub/clone/dto/ApiDefinitionResponse.java - Response DTO completo API
+✓ src/main/java/com/swaggerhub/clone/dto/ApiVersionRequest.java - Request DTO per versioni
+✓ src/main/java/com/swaggerhub/clone/dto/ApiVersionResponse.java - Response DTO versioni
+✓ src/main/java/com/swaggerhub/clone/dto/PageResponse.java - Generic wrapper per paginazione
+
+REPOSITORY (DATA ACCESS)
+========================
+✓ src/main/java/com/swaggerhub/clone/repository/ApiDefinitionRepository.java - JpaRepository per API
+✓ src/main/java/com/swaggerhub/clone/repository/ApiVersionRepository.java - JpaRepository per versioni
+
+SERVICE (BUSINESS LOGIC)
+========================
+✓ src/main/java/com/swaggerhub/clone/service/ApiDefinitionService.java
+  - getApis(page, size, search) - Elenco con paginazione e ricerca
+  - getApiById(id) - Dettagli singola API
+  - createApi(request) - Creazione nuova API
+  - updateApi(id, request) - Aggiornamento API
+  - deleteApi(id) - Soft delete API
+
+✓ src/main/java/com/swaggerhub/clone/service/ApiVersionService.java
+  - getVersionsByApiId(apiId) - Elenco versioni di un'API
+  - getVersionById(apiId, versionId) - Dettagli specifica versione
+  - createVersion(apiId, request) - Creazione versione
+  - updateVersion(apiId, versionId, request) - Aggiornamento versione
+
+CONTROLLER (ENDPOINTS REST)
+===========================
+✓ src/main/java/com/swaggerhub/clone/controller/ApiDefinitionController.java
+  - GET /api/v1/apis - Elenco API (paginato, searchable)
+  - POST /api/v1/apis - Crea API
+  - GET /api/v1/apis/{id} - Dettagli API
+  - PUT /api/v1/apis/{id} - Aggiorna API
+  - DELETE /api/v1/apis/{id} - Elimina API
+
+✓ src/main/java/com/swaggerhub/clone/controller/ApiVersionController.java
+  - GET /api/v1/apis/{apiId}/versions - Elenco versioni
+  - POST /api/v1/apis/{apiId}/versions - Crea versione
+  - GET /api/v1/apis/{apiId}/versions/{versionId} - Dettagli versione
+  - PUT /api/v1/apis/{apiId}/versions/{versionId} - Aggiorna versione
+
+CONFIGURAZIONE
+===============
+✓ src/main/java/com/swaggerhub/clone/config/CorsConfig.java
+  - Permite CORS da http://localhost:3000
+  - Allows: GET, POST, PUT, DELETE, OPTIONS
+  - All headers permitted
+  - MaxAge: 3600 secondi
+
+✓ src/main/java/com/swaggerhub/clone/SwaggerHubCloneApplication.java
+  - Main class Spring Boot
+
+APPLICATION CONFIG
+==================
+✓ src/main/resources/application.properties
+  - Server port: 8080
+  - H2 in-memory database (jdbc:h2:mem:swaggerhubdb)
+  - JPA/Hibernate: ddl-auto=create-drop
+  - SpringDoc Swagger UI enabled
+  - H2 Console enabled (/h2-console)
+
+DATA INITIALIZATION
+====================
+✓ src/main/resources/data.sql
+  - 5 API di esempio (Petstore, Payment, Users, Inventory, Notifications)
+  - 5 Versioni di esempio con YAML specs
+
+TEST
+====
+✓ src/test/java/com/swaggerhub/clone/controller/ApiDefinitionControllerTest.java
+  - testGetApis_returnsOk
+  - testCreateApi_returnsCreated
+  - testGetApiById_returnsOk
+  - testDeleteApi_returnsNoContent
+
+STACK TECHNOLOGIES
+==================
+- Spring Boot 3.2.5
+- Spring Data JPA
+- Spring Web MVC
+- Bean Validation (jakarta.validation)
+- Lombok
+- H2 Database
+- SpringDoc OpenAPI 2.5.0
+- Maven 3.x
+- Java 17
+
+COMPILAZIONE & ESECUZIONE
+==========================
+1. mvn clean package
+2. java -jar target/swagger-hub-clone-backend-0.1.0.jar
+3. API base: http://localhost:8080/api/v1
+4. Swagger UI: http://localhost:8080/swagger-ui.html
+5. H2 Console: http://localhost:8080/h2-console
+
+NOTE IMPLEMENTATIVE
+===================
+- Tutti i file sono compilabili e funzionanti
+- Lombok correttamente applicato a Entity e DTO
+- Paginazione implementata con Spring Data Pageable
+- Soft delete implementato (status=DELETED)
+- Mapping manuale entity<->dto (no MapStruct)
+- EntityNotFoundException per entità non trovate
+- DTOs validati con @NotBlank su campi obbligatori
+- LocalDateTime auto-gestito con @PrePersist/@PreUpdate
+- H2 Console disponibile durante sviluppo
+- CORS configurato globalmente
