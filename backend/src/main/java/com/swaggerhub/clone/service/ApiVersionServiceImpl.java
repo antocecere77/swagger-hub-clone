@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ApiVersionServiceImpl implements IApiVersionService {
+public class ApiVersionServiceImpl implements ApiVersionService {
 
     private final ApiVersionRepository versionRepository;
     private final ApiDefinitionRepository apiRepository;

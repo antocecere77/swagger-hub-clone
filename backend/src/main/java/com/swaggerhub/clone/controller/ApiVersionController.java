@@ -1,7 +1,7 @@
 package com.swaggerhub.clone.controller;
 
 import com.swaggerhub.clone.dto.*;
-import com.swaggerhub.clone.service.IApiVersionService;
+import com.swaggerhub.clone.service.ApiVersionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,7 +20,7 @@ import java.util.List;
 @Tag(name = "API Versions", description = "Manage API versions and specs")
 public class ApiVersionController {
 
-    private final IApiVersionService versionService;
+    private final ApiVersionService versionService;
 
     @GetMapping
     @Operation(summary = "List all versions of an API")

@@ -1,8 +1,8 @@
 package com.swaggerhub.clone.controller;
 
 import com.swaggerhub.clone.dto.*;
-import com.swaggerhub.clone.service.IDashboardService;
-import com.swaggerhub.clone.service.IApiDefinitionService;
+import com.swaggerhub.clone.service.DashboardService;
+import com.swaggerhub.clone.service.ApiDefinitionService;
 import com.swaggerhub.clone.service.DashboardServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,8 +21,8 @@ import java.net.URI;
 @Tag(name = "API Definitions", description = "Manage API definitions")
 public class ApiDefinitionController {
 
-    private final IApiDefinitionService apiService;
-    private final IDashboardService dashboardService;
+    private final ApiDefinitionService apiService;
+    private final DashboardService dashboardService;
 
     @GetMapping
     @Operation(summary = "List all APIs with pagination and filtering")

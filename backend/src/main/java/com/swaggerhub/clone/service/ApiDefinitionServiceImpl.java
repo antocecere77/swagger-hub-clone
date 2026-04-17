@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ApiDefinitionServiceImpl implements IApiDefinitionService {
+public class ApiDefinitionServiceImpl implements ApiDefinitionService {
 
     private final ApiDefinitionRepository apiRepository;
     private final ApiVersionRepository versionRepository;

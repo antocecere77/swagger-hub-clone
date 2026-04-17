@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class DashboardServiceImpl implements IDashboardService {
+public class DashboardServiceImpl implements DashboardService {
 
     private final ApiDefinitionRepository apiRepository;
     private final ApiVersionRepository versionRepository;
