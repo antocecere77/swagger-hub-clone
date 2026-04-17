@@ -2,46 +2,43 @@ package com.swaggerhub.clone.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "api_versions")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ApiVersion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "api_definition_id", nullable = false)
     private ApiDefinition apiDefinition;
 
-    @Column(nullable = false)
+    @Column(name = "version_number", nullable = false, length = 50)
     private String versionNumber;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String spec;
 
-    @Column(nullable = false)
-    private String specFormat;
+    @Column(name = "spec_format", length = 10)
+    @Builder.Default
+    private String specFormat = "YAML";
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private VersionStatus status;
+    @Builder.Default
+    private VersionStatus status = VersionStatus.DRAFT;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 1000)
     private String changelog;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist

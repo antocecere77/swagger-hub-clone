@@ -2,25 +2,21 @@ package com.swaggerhub.clone.dto;
 
 import com.swaggerhub.clone.model.ApiVisibility;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Size;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class ApiDefinitionRequest {
-
+public record ApiDefinitionRequest(
     @NotBlank(message = "Name is required")
-    private String name;
+    @Size(min = 2, max = 200, message = "Name must be between 2 and 200 characters")
+    String name,
 
-    private String description;
+    @Size(max = 1000, message = "Description must be at most 1000 characters")
+    String description,
 
-    private String category;
+    @Size(max = 100, message = "Category must be at most 100 characters")
+    String category,
 
-    private ApiVisibility visibility;
+    ApiVisibility visibility,
 
-    private String tags;
-}
+    @Size(max = 500, message = "Tags must be at most 500 characters")
+    String tags
+) {}

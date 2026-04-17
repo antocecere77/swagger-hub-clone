@@ -2,27 +2,19 @@ package com.swaggerhub.clone.dto;
 
 import com.swaggerhub.clone.model.VersionStatus;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Pattern;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class ApiVersionRequest {
-
+public record ApiVersionRequest(
     @NotBlank(message = "Version number is required")
-    private String versionNumber;
+    @Pattern(regexp = "^\\d+\\.\\d+\\.\\d+$", message = "Version must follow semver format (e.g. 1.0.0)")
+    String versionNumber,
 
-    @NotBlank(message = "Spec is required")
-    private String spec;
+    String spec,
 
-    @NotBlank(message = "Spec format is required")
-    private String specFormat;
+    @Pattern(regexp = "^(YAML|JSON)$", message = "Format must be YAML or JSON")
+    String specFormat,
 
-    private String changelog;
+    VersionStatus status,
 
-    private VersionStatus status;
-}
+    String changelog
+) {}

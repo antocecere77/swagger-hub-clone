@@ -3,16 +3,17 @@ package com.swaggerhub.clone.service;
 import com.swaggerhub.clone.dto.ApiDefinitionRequest;
 import com.swaggerhub.clone.dto.ApiDefinitionResponse;
 import com.swaggerhub.clone.dto.PageResponse;
+import com.swaggerhub.clone.exception.ResourceNotFoundException;
 import com.swaggerhub.clone.model.ApiDefinition;
 import com.swaggerhub.clone.model.ApiStatus;
 import com.swaggerhub.clone.model.ApiVisibility;
 import com.swaggerhub.clone.repository.ApiDefinitionRepository;
 import com.swaggerhub.clone.repository.ApiVersionRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,15 +27,19 @@ public class ApiDefinitionService {
     private final ApiDefinitionRepository apiDefinitionRepository;
     private final ApiVersionRepository apiVersionRepository;
 
-    public PageResponse<ApiDefinitionResponse> getApis(int page, int size, String search) {
-        Pageable pageable = PageRequest.of(page, size);
-        
+    public PageResponse<ApiDefinitionResponse> getApis(int page, int size, String search, String category, String sort) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "updatedAt");
+        if ("name".equals(sort)) sorting = Sort.by(Sort.Direction.ASC, "name");
+        if ("createdAt".equals(sort)) sorting = Sort.by(Sort.Direction.DESC, "createdAt");
+
+        Pageable pageable = PageRequest.of(page, size, sorting);
+
         Page<ApiDefinition> result;
-        if (search != null && !search.isEmpty()) {
-            result = apiDefinitionRepository.findByStatusNotAndNameContainingIgnoreCase(
-                    ApiStatus.DELETED, search, pageable);
-        } else {
+        if ((search == null || search.isBlank()) && (category == null || category.isBlank())) {
             result = apiDefinitionRepository.findByStatusNot(ApiStatus.DELETED, pageable);
+        } else {
+            result = apiDefinitionRepository.findByStatusNotAndNameContainingIgnoreCaseAndCategory(
+                    ApiStatus.DELETED, search, category, pageable);
         }
 
         return PageResponse.<ApiDefinitionResponse>builder()
@@ -49,13 +54,7 @@ public class ApiDefinitionService {
     }
 
     public ApiDefinitionResponse getApiById(Long id) {
-        ApiDefinition apiDefinition = apiDefinitionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("API Definition not found with id: " + id));
-        
-        if (apiDefinition.getStatus() == ApiStatus.DELETED) {
-            throw new EntityNotFoundException("API Definition not found with id: " + id);
-        }
-        
+        ApiDefinition apiDefinition = findActiveApi(id);
         return mapToResponse(apiDefinition);
     }
 
@@ -75,13 +74,7 @@ public class ApiDefinitionService {
     }
 
     public ApiDefinitionResponse updateApi(Long id, ApiDefinitionRequest request) {
-        ApiDefinition apiDefinition = apiDefinitionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("API Definition not found with id: " + id));
-
-        if (apiDefinition.getStatus() == ApiStatus.DELETED) {
-            throw new EntityNotFoundException("API Definition not found with id: " + id);
-        }
-
+        ApiDefinition apiDefinition = findActiveApi(id);
         apiDefinition.setName(request.getName());
         apiDefinition.setDescription(request.getDescription());
         apiDefinition.setCategory(request.getCategory());
@@ -95,16 +88,26 @@ public class ApiDefinitionService {
     }
 
     public void deleteApi(Long id) {
-        ApiDefinition apiDefinition = apiDefinitionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("API Definition not found with id: " + id));
-
+        ApiDefinition apiDefinition = findActiveApi(id);
         apiDefinition.setStatus(ApiStatus.DELETED);
         apiDefinitionRepository.save(apiDefinition);
     }
 
+    public long countActiveApis() {
+        return apiDefinitionRepository.countByStatus(ApiStatus.ACTIVE);
+    }
+
+    // ── helpers ──────────────────────────────────────────────────
+
+    private ApiDefinition findActiveApi(Long id) {
+        return apiDefinitionRepository.findById(id)
+                .filter(a -> a.getStatus() != ApiStatus.DELETED)
+                .orElseThrow(() -> new ResourceNotFoundException("API Definition not found with id: " + id));
+    }
+
     private ApiDefinitionResponse mapToResponse(ApiDefinition apiDefinition) {
         long versionsCount = apiVersionRepository.countByApiDefinitionId(apiDefinition.getId());
-        
+
         return ApiDefinitionResponse.builder()
                 .id(apiDefinition.getId())
                 .name(apiDefinition.getName())

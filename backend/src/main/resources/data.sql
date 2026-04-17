@@ -1,17 +1,17 @@
-INSERT INTO api_definitions (name, description, category, visibility, status, owner_id, tags, created_at, updated_at)
-VALUES
-    ('Petstore API', 'A sample API that uses Petstore schema', 'Sample', 'PUBLIC', 'ACTIVE', 'default-user', 'sample,petstore,openapi', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Payment Gateway API', 'Payment processing and management API', 'Finance', 'PRIVATE', 'ACTIVE', 'default-user', 'payment,gateway,finance', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('User Management API', 'User authentication and profile management', 'Users', 'PUBLIC', 'ACTIVE', 'default-user', 'users,auth,management', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Inventory API', 'Product inventory and stock management', 'E-Commerce', 'TEAM', 'ACTIVE', 'default-user', 'inventory,products,stock', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Notification API', 'Email and push notification service', 'Communication', 'PUBLIC', 'ACTIVE', 'default-user', 'notifications,email,push', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO api_definitions (name, description, category, visibility, status, owner_id, tags, created_at, updated_at) VALUES
+('Petstore API',      'A sample API for a pet store',                       'E-Commerce',    'PUBLIC', 'ACTIVE', 'default-user', 'pets,store,openapi',         NOW(), NOW()),
+('Payment Gateway',   'REST API for payment processing',                     'Finance',       'PUBLIC', 'ACTIVE', 'default-user', 'payments,finance,stripe',    NOW(), NOW()),
+('User Management',   'API for user authentication and profile management',  'Identity',      'PUBLIC', 'ACTIVE', 'default-user', 'users,auth,identity',        NOW(), NOW()),
+('Inventory Service', 'Microservice for inventory tracking',                  'Logistics',     'TEAM',   'ACTIVE', 'default-user', 'inventory,logistics',        NOW(), NOW()),
+('Notification Hub',  'Send emails, SMS and push notifications',              'Communication', 'PUBLIC', 'ACTIVE', 'default-user', 'notifications,email,sms',   NOW(), NOW());
 
-INSERT INTO api_versions (api_definition_id, version_number, spec, spec_format, status, changelog, created_at, updated_at)
-VALUES
-    (1, '1.0.0', 'openapi: 3.0.0
+INSERT INTO api_versions (api_definition_id, version_number, spec_format, status, changelog, created_at, updated_at, spec) VALUES
+(1, '1.0.0', 'YAML', 'PUBLISHED', 'Initial release', NOW(), NOW(),
+'openapi: "3.0.0"
 info:
   title: Petstore API
   version: 1.0.0
+  description: A sample API for a pet store
 paths:
   /pets:
     get:
@@ -19,60 +19,53 @@ paths:
       operationId: listPets
       responses:
         "200":
-          description: Successful response', 'YAML', 'PUBLISHED', 'Initial release', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (1, '2.0.0', 'openapi: 3.0.0
-info:
-  title: Petstore API
-  version: 2.0.0
-paths:
-  /pets:
+          description: A list of pets
+  /pets/{petId}:
     get:
-      summary: List all pets with pagination
-      operationId: listPets
+      summary: Info for a specific pet
+      operationId: showPetById
       parameters:
-        - name: limit
-          in: query
+        - name: petId
+          in: path
+          required: true
           schema:
-            type: integer
+            type: string
       responses:
         "200":
-          description: Successful response', 'YAML', 'DRAFT', 'Added pagination support', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (2, '1.0.0', 'openapi: 3.0.0
+          description: Expected response to a valid request'),
+(2, '1.0.0', 'YAML', 'PUBLISHED', 'Initial release', NOW(), NOW(),
+'openapi: "3.0.0"
 info:
   title: Payment Gateway API
   version: 1.0.0
 paths:
   /payments:
     post:
-      summary: Process a payment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
+      summary: Create a payment
       responses:
         "201":
-          description: Payment created', 'YAML', 'PUBLISHED', 'Initial release', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (3, '1.0.0', 'openapi: 3.0.0
+          description: Payment created
+  /payments/{id}:
+    get:
+      summary: Get payment status
+      responses:
+        "200":
+          description: Payment details'),
+(3, '2.1.0', 'YAML', 'DRAFT', 'Added OAuth2 support', NOW(), NOW(),
+'openapi: "3.0.0"
 info:
   title: User Management API
-  version: 1.0.0
+  version: 2.1.0
 paths:
   /users:
     get:
-      summary: Get all users
+      summary: List users
       responses:
         "200":
-          description: List of users', 'YAML', 'PUBLISHED', 'Initial release', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (4, '1.0.0', 'openapi: 3.0.0
-info:
-  title: Inventory API
-  version: 1.0.0
-paths:
-  /products:
+          description: List of users
+  /users/{id}:
     get:
-      summary: Get product inventory
+      summary: Get user by ID
       responses:
         "200":
-          description: Product list', 'YAML', 'PUBLISHED', 'Initial release', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+          description: User details');
